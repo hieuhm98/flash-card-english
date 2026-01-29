@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse and search through all English flashcards">
+    <meta name="keywords" content="flashcards, English learning, vocabulary, search">
+    <title>Browse Flashcards - English Learning</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="list.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">
+                Browse Flashcards
+            </h1>
+            <p class="subtitle">Search and explore all vocabulary cards</p>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search by word, pronunciation, or meaning..."
+                    autocomplete="off"
+                >
+                <button id="clearBtn" class="clear-btn" title="Clear search">✕</button>
+            </div>
+            <div class="search-stats">
+                <span id="searchStats">Loading flashcards...</span>
+            </div>
+        </div>
+
+        <!-- Filter Options -->
+        <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="favorites">Favorites</button>
+        </div>
+
+        <!-- Flashcards Grid -->
+        <div id="flashcardsGrid" class="flashcards-grid">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Back to Practice -->
+        <div class="back-section">
+            <a href="index.html" class="btn btn-primary">
+                <span class="btn-icon">←</span>
+                Back to Practice
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>💡 Click any card to flip and see the meaning!</p>
+        </footer>
+    </div>
+
+    <script type="module" src="list.js"></script>
+</body>
+</html>

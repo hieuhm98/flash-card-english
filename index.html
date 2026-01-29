@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive flashcard application for learning English with beautiful 3D flip animations">
+    <meta name="keywords" content="flashcards, English learning, study tool, vocabulary">
+    <title>English Flashcards - Interactive Learning</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">
+                English Flashcards
+            </h1>
+            <p class="subtitle">Master English vocabulary with interactive learning</p>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-info">
+                <span class="progress-text">Progress</span>
+                <span class="progress-count" id="progressCount">0 / 0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Flashcard -->
+        <div class="flashcard-wrapper">
+            <div class="flashcard" id="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="card-label">Question</div>
+                        <div class="card-content" id="frontContent">
+                            Click to start learning!
+                        </div>
+                        <div class="flip-hint">
+                            <span class="hint-icon">↻</span>
+                            Click or press Space to flip
+                        </div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="card-label">Answer</div>
+                        <div class="card-content" id="backContent">
+                            Your answer will appear here
+                        </div>
+                        <div class="flip-hint">
+                            <span class="hint-icon">↻</span>
+                            Click or press Space to flip back
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-secondary" id="prevBtn" title="Previous card (← Arrow)">
+                <span class="btn-icon">←</span>
+                Previous
+            </button>
+            
+            <button class="btn btn-primary" id="shuffleBtn" title="Shuffle cards">
+                <span class="btn-icon">🔀</span>
+                Shuffle
+            </button>
+            
+            <button class="btn btn-secondary" id="nextBtn" title="Next card (→ Arrow)">
+                Next
+                <span class="btn-icon">→</span>
+            </button>
+        </div>
+
+        <!-- Browse All Button -->
+        <div class="browse-section">
+            <a href="list.html" class="btn btn-accent">
+                <span class="btn-icon">📚</span>
+                Browse All Flashcards
+            </a>
+        </div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="shortcuts">
+            <h3 class="shortcuts-title">Keyboard Shortcuts</h3>
+            <div class="shortcuts-grid">
+                <div class="shortcut-item">
+                    <kbd>Space</kbd>
+                    <span>Flip card</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>←</kbd>
+                    <span>Previous</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>→</kbd>
+                    <span>Next</span>
+                </div>
+                <div class="shortcut-item">
+                    <kbd>S</kbd>
+                    <span>Shuffle</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>💡 Tip: Regular practice leads to better retention!</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
