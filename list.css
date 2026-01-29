@@ -277,8 +277,8 @@ body::before {
 }
 
 .flashcard-item:hover .card-face {
-    transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
+    border-color: rgba(102, 126, 234, 0.3);
 }
 
 .card-front {
@@ -350,6 +350,52 @@ body::before {
     color: var(--text-muted);
     margin-top: var(--spacing-sm);
     opacity: 0.7;
+}
+
+/* ============================================
+   Pagination
+   ============================================ */
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xl);
+    animation: fadeIn 1s ease-out 0.7s both;
+}
+
+.pagination-btn {
+    padding: 0.75rem 1rem;
+    font-size: 1.2rem;
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    min-width: 3rem;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    padding: 0.75rem 1.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    backdrop-filter: blur(10px);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
 /* ============================================

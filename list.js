@@ -6,15 +6,26 @@ class FlashcardList {
   constructor() {
     this.flashcards = [];
     this.filteredFlashcards = [];
-    this.favorites = this.loadFavorites();
     this.currentFilter = "all";
+
+    // Pagination
+    this.currentPage = 1;
+    this.itemsPerPage = 20; // Show 20 cards per page
+    this.totalPages = 1;
 
     // DOM Elements
     this.searchInput = document.getElementById("searchInput");
     this.clearBtn = document.getElementById("clearBtn");
     this.searchStats = document.getElementById("searchStats");
     this.flashcardsGrid = document.getElementById("flashcardsGrid");
-    this.filterBtns = document.querySelectorAll(".filter-btn");
+
+    // Pagination elements
+    this.paginationContainer = document.getElementById("paginationContainer");
+    this.pageInfo = document.getElementById("pageInfo");
+    this.firstPageBtn = document.getElementById("firstPageBtn");
+    this.prevPageBtn = document.getElementById("prevPageBtn");
+    this.nextPageBtn = document.getElementById("nextPageBtn");
+    this.lastPageBtn = document.getElementById("lastPageBtn");
 
     this.init();
   }
@@ -27,11 +38,17 @@ class FlashcardList {
     this.searchInput.addEventListener("input", () => this.handleSearch());
     this.clearBtn.addEventListener("click", () => this.clearSearch());
 
-    this.filterBtns.forEach((btn) => {
-      btn.addEventListener("click", (e) =>
-        this.handleFilter(e.target.dataset.filter),
-      );
-    });
+    // Pagination event listeners
+    this.firstPageBtn.addEventListener("click", () => this.goToPage(1));
+    this.prevPageBtn.addEventListener("click", () =>
+      this.goToPage(this.currentPage - 1),
+    );
+    this.nextPageBtn.addEventListener("click", () =>
+      this.goToPage(this.currentPage + 1),
+    );
+    this.lastPageBtn.addEventListener("click", () =>
+      this.goToPage(this.totalPages),
+    );
 
     // Display all cards initially
     this.displayCards();
@@ -80,6 +97,7 @@ class FlashcardList {
     }
 
     this.applyCurrentFilter();
+    this.currentPage = 1; // Reset to first page
     this.displayCards();
     this.updateStats();
   }
@@ -94,48 +112,52 @@ class FlashcardList {
     this.searchInput.focus();
   }
 
-  handleFilter(filter) {
-    this.currentFilter = filter;
-
-    // Update active button
-    this.filterBtns.forEach((btn) => {
-      if (btn.dataset.filter === filter) {
-        btn.classList.add("active");
-      } else {
-        btn.classList.remove("active");
-      }
-    });
-
-    this.applyCurrentFilter();
-    this.displayCards();
-    this.updateStats();
-  }
-
   applyCurrentFilter() {
-    if (this.currentFilter === "favorites") {
-      this.filteredFlashcards = this.filteredFlashcards.filter((card) =>
-        this.favorites.includes(card.front),
-      );
-    }
+    // No filters currently active
   }
 
   displayCards() {
     if (this.filteredFlashcards.length === 0) {
       this.showEmptyState();
+      this.paginationContainer.style.display = "none";
       return;
     }
 
+    // Calculate pagination
+    this.totalPages = Math.ceil(
+      this.filteredFlashcards.length / this.itemsPerPage,
+    );
+
+    // Ensure current page is valid
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+    if (this.currentPage < 1) {
+      this.currentPage = 1;
+    }
+
+    // Get cards for current page
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    const cardsToDisplay = this.filteredFlashcards.slice(startIndex, endIndex);
+
+    // Clear and render cards
     this.flashcardsGrid.innerHTML = "";
 
-    this.filteredFlashcards.forEach((card, index) => {
-      const cardElement = this.createCardElement(card, index);
+    cardsToDisplay.forEach((card, index) => {
+      const cardElement = this.createCardElement(card, startIndex + index);
       this.flashcardsGrid.appendChild(cardElement);
     });
+
+    // Update pagination controls
+    this.updatePaginationControls();
+    this.paginationContainer.style.display = "flex";
+
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   createCardElement(card, index) {
-    const isFavorite = this.favorites.includes(card.front);
-
     const cardDiv = document.createElement("div");
     cardDiv.className = "flashcard-item";
     cardDiv.innerHTML = `
@@ -143,9 +165,6 @@ class FlashcardList {
         <div class="card-face card-front">
           <div class="card-header">
             <span class="card-label">Word</span>
-            <button class="favorite-btn" data-word="${this.escapeHtml(card.front)}" title="Add to favorites">
-              ${isFavorite ? "⭐" : "☆"}
-            </button>
           </div>
           <div class="card-word">${this.escapeHtml(card.front)}</div>
           ${card.pronunciation ? `<div class="card-pronunciation">${this.escapeHtml(card.pronunciation)}</div>` : ""}
@@ -162,62 +181,11 @@ class FlashcardList {
     `;
 
     // Add flip functionality
-    cardDiv.addEventListener("click", (e) => {
-      if (!e.target.classList.contains("favorite-btn")) {
-        cardDiv.classList.toggle("flipped");
-      }
-    });
-
-    // Add favorite functionality
-    const favoriteBtn = cardDiv.querySelector(".favorite-btn");
-    favoriteBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      this.toggleFavorite(card.front, favoriteBtn);
+    cardDiv.addEventListener("click", () => {
+      cardDiv.classList.toggle("flipped");
     });
 
     return cardDiv;
-  }
-
-  toggleFavorite(word, btn) {
-    const index = this.favorites.indexOf(word);
-
-    if (index > -1) {
-      // Remove from favorites
-      this.favorites.splice(index, 1);
-      btn.textContent = "☆";
-    } else {
-      // Add to favorites
-      this.favorites.push(word);
-      btn.textContent = "⭐";
-    }
-
-    this.saveFavorites();
-
-    // If currently filtering by favorites, update display
-    if (this.currentFilter === "favorites") {
-      this.handleSearch();
-    }
-  }
-
-  loadFavorites() {
-    try {
-      const saved = localStorage.getItem("flashcard-favorites");
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      console.warn("Could not load favorites:", e);
-      return [];
-    }
-  }
-
-  saveFavorites() {
-    try {
-      localStorage.setItem(
-        "flashcard-favorites",
-        JSON.stringify(this.favorites),
-      );
-    } catch (e) {
-      console.warn("Could not save favorites:", e);
-    }
   }
 
   updateStats() {
@@ -227,8 +195,6 @@ class FlashcardList {
 
     if (query) {
       this.searchStats.textContent = `Showing ${showing} of ${total} flashcards`;
-    } else if (this.currentFilter === "favorites") {
-      this.searchStats.textContent = `${showing} favorite flashcard${showing !== 1 ? "s" : ""}`;
     } else {
       this.searchStats.textContent = `${total} flashcard${total !== 1 ? "s" : ""} available`;
     }
@@ -238,9 +204,7 @@ class FlashcardList {
     const query = this.searchInput.value.trim();
     const message = query
       ? `No flashcards found for "${query}"`
-      : this.currentFilter === "favorites"
-        ? "No favorites yet. Click the ☆ icon on any card to add it to favorites!"
-        : "No flashcards available";
+      : "No flashcards available";
 
     this.flashcardsGrid.innerHTML = `
       <div class="empty-state">
@@ -264,6 +228,26 @@ class FlashcardList {
     const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  // Pagination methods
+  goToPage(pageNumber) {
+    if (pageNumber < 1 || pageNumber > this.totalPages) {
+      return;
+    }
+    this.currentPage = pageNumber;
+    this.displayCards();
+  }
+
+  updatePaginationControls() {
+    // Update page info
+    this.pageInfo.textContent = `Page ${this.currentPage} of ${this.totalPages}`;
+
+    // Update button states
+    this.firstPageBtn.disabled = this.currentPage === 1;
+    this.prevPageBtn.disabled = this.currentPage === 1;
+    this.nextPageBtn.disabled = this.currentPage === this.totalPages;
+    this.lastPageBtn.disabled = this.currentPage === this.totalPages;
   }
 }
 
