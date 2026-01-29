@@ -244,7 +244,7 @@ body::before {
 
 .flashcard-item {
     perspective: 1000px;
-    height: 280px;
+    height: 360px;
     cursor: pointer;
 }
 
